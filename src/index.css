@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ensure monospace font for consistent spacing */
+.font-mono {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Custom scrollbar for better UX */
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Disable text selection on numbers to prevent accidental selection */
+.select-none {
+  user-select: none;
+}
+
+/* Focus visible for better accessibility */
+input:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+  .min-w-max {
+    min-width: 3200px; /* 100 columns (50 questions + 50 answers) * 32px */
+  }
+}
+
+/* Animation for smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
