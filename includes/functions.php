@@ -159,6 +159,46 @@ function exportToExcel($sessionId = null) {
         $csvContent .= "NIP: " . $session['participant_nip'] . "\n";
         $csvContent .= "Tanggal: " . date('Y-m-d H:i:s') . "\n\n";
         
+        // Calculate detailed statistics for export
+        $columnStats = [];
+        $totalWrongAnswers = 0;
+        
+        for ($col = 0; $col < 50; $col++) {
+            $answeredInColumn = 0;
+            $wrongInColumn = 0;
+            
+            for ($row = 0; $row < 24; $row++) { // Only check rows 0-23 (24 rows) since row 24 has no next row to compare
+                $answer = trim($testData['answers'][$row][$col]);
+                if ($answer !== '') {
+                    $answeredInColumn++;
+                    
+                    // Check if answer is correct
+                    $expectedAnswer = $testData['numbers'][$row][$col] + $testData['numbers'][$row + 1][$col];
+                    if (intval($answer) !== $expectedAnswer) {
+                        $wrongInColumn++;
+                        $totalWrongAnswers++;
+                    }
+                }
+            }
+            
+            $columnStats[$col] = [
+                'answered' => $answeredInColumn,
+                'wrong' => $wrongInColumn
+            ];
+        }
+        
+        // Add statistics to CSV
+        $csvContent .= "STATISTIK PESERTA\n";
+        $csvContent .= "Jumlah kolom jawaban yang salah dari soal yang dijawab: " . $totalWrongAnswers . "\n\n";
+        
+        // Add column statistics
+        $csvContent .= "STATISTIK PER KOLOM\n";
+        $csvContent .= "Kolom,Jumlah Baris Dijawab,Jumlah Jawaban Salah\n";
+        for ($col = 0; $col < 50; $col++) {
+            $csvContent .= "Kolom " . ($col + 1) . "," . $columnStats[$col]['answered'] . "," . $columnStats[$col]['wrong'] . "\n";
+        }
+        $csvContent .= "\n";
+        
         // Add questions header
         $csvContent .= "SOAL\n";
         $header = "";
