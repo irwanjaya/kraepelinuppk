@@ -1,0 +1,248 @@
+/* Custom styles for Kraepelin Test Application */
+
+/* Ensure monospace font for consistent spacing */
+.font-mono {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Custom scrollbar for better UX */
+::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Disable text selection on numbers to prevent accidental selection */
+.select-none {
+    user-select: none;
+}
+
+/* Focus visible for better accessibility */
+input:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* Answer input specific styles */
+.answer-input {
+    transition: all 0.15s ease-in-out;
+}
+
+.answer-input:focus {
+    transform: scale(1.05);
+    z-index: 10;
+    position: relative;
+}
+
+.answer-input:disabled {
+    background-color: #f9fafb;
+    cursor: not-allowed;
+}
+
+/* Button hover effects */
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Progress bar animation */
+.progress-bar {
+    transition: width 0.3s ease-in-out;
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none;
+    }
+    
+    .answer-input {
+        border: 1px solid #000 !important;
+        background: white !important;
+    }
+}
+
+/* Responsive design adjustments */
+@media (max-width: 768px) {
+    .min-w-max {
+        min-width: 3200px; /* 100 columns (50 questions + 50 answers) * 32px */
+    }
+    
+    .text-3xl {
+        font-size: 1.5rem;
+    }
+    
+    .p-6 {
+        padding: 1rem;
+    }
+}
+
+/* Animation for smooth transitions */
+.transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Loading spinner */
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Success message */
+.success-message {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+/* Error message */
+.error-message {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Warning message */
+.warning-message {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+}
+
+/* Highlight correct answers */
+.correct-answer {
+    background-color: #d4edda !important;
+    border-color: #28a745 !important;
+}
+
+/* Highlight incorrect answers */
+.incorrect-answer {
+    background-color: #f8d7da !important;
+    border-color: #dc3545 !important;
+}
+
+/* Test grid container */
+.test-grid {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* Sticky header for test grid */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 5;
+}
+
+/* Input validation styles */
+.invalid-input {
+    border-color: #dc3545 !important;
+    background-color: #f8d7da !important;
+}
+
+.valid-input {
+    border-color: #28a745 !important;
+    background-color: #d4edda !important;
+}
+
+/* Timer display */
+.timer {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+/* Status indicators */
+.status-running {
+    color: #059669;
+}
+
+.status-stopped {
+    color: #dc2626;
+}
+
+.status-paused {
+    color: #d97706;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    
+    .md\:grid-cols-2 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+    
+    .flex {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .gap-3 {
+        gap: 0.5rem;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .transition-all,
+    .answer-input,
+    button {
+        transition: none;
+    }
+    
+    .answer-input:focus {
+        transform: none;
+    }
+    
+    button:hover {
+        transform: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .answer-input {
+        border-width: 2px;
+    }
+    
+    .border-gray-300 {
+        border-color: #000;
+    }
+    
+    .text-gray-600 {
+        color: #000;
+    }
+}
