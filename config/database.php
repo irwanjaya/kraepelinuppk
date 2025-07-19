@@ -1,9 +1,9 @@
 <?php
 // Database configuration
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'kraepelin_test');
+define('DB_HOST', 'your_hosting_mysql_host'); // Usually 'localhost' or provided by hosting
+define('DB_USER', 'your_database_username');
+define('DB_PASS', 'your_database_password');
+define('DB_NAME', 'your_database_name');
 
 // Create connection
 function getConnection() {
