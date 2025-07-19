@@ -65,6 +65,34 @@ foreach ($testData['answers'] as $row) {
 }
 $progressPercentage = ($filledAnswers / $totalAnswers) * 100;
 ?>
+// Calculate detailed statistics
+$columnStats = [];
+$totalWrongAnswers = 0;
+
+for ($col = 0; $col < 50; $col++) {
+    $answeredInColumn = 0;
+    $wrongInColumn = 0;
+    
+    for ($row = 0; $row < 24; $row++) { // Only check rows 0-23 (24 rows) since row 24 has no next row to compare
+        $answer = trim($testData['answers'][$row][$col]);
+        if ($answer !== '') {
+            $answeredInColumn++;
+            
+            // Check if answer is correct
+            $expectedAnswer = $testData['numbers'][$row][$col] + $testData['numbers'][$row + 1][$col];
+            if (intval($answer) !== $expectedAnswer) {
+                $wrongInColumn++;
+                $totalWrongAnswers++;
+            }
+        }
+    }
+    
+    $columnStats[$col] = [
+        'answered' => $answeredInColumn,
+        'wrong' => $wrongInColumn
+    ];
+}
+
 
 <!DOCTYPE html>
 <html lang="id">
@@ -228,6 +256,49 @@ $progressPercentage = ($filledAnswers / $totalAnswers) * 100;
 
         <!-- Test Grid -->
         <div class="bg-white rounded-lg shadow-sm p-6">
+            <!-- Participant Statistics -->
+            <?php if ($isRunning || (!empty($participantInfo['name']) && !empty($participantInfo['nip']))): ?>
+                <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Statistik Peserta</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <span class="font-medium text-gray-700">Nama:</span>
+                            <span class="ml-2 text-gray-900"><?php echo htmlspecialchars($participantInfo['name']) ?: '???'; ?></span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">NIP:</span>
+                            <span class="ml-2 text-gray-900 font-mono"><?php echo htmlspecialchars($participantInfo['nip']) ?: '???'; ?></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <span class="font-medium text-red-600">Jumlah kolom jawaban yang salah dari soal yang dijawab:</span>
+                        <span class="ml-2 text-red-800 font-bold"><?php echo $totalWrongAnswers; ?></span>
+                    </div>
+                    
+                    <!-- Column Statistics -->
+                    <div class="border-t pt-4">
+                        <h4 class="font-medium text-gray-700 mb-3">Statistik Per Kolom:</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-2 text-xs">
+                            <?php for ($col = 0; $col < 50; $col++): ?>
+                                <div class="bg-white p-2 rounded border">
+                                    <div class="font-medium text-blue-600 mb-1">Kolom <?php echo $col + 1; ?></div>
+                                    <div class="text-gray-600">
+                                        Dijawab: <span class="font-medium"><?php echo $columnStats[$col]['answered']; ?></span>
+                                    </div>
+                                    <?php if ($columnStats[$col]['wrong'] > 0): ?>
+                                        <div class="text-red-600">
+                                            Salah: <span class="font-medium"><?php echo $columnStats[$col]['wrong']; ?></span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
             <div class="overflow-x-auto">
                 <div class="min-w-max">
                     <!-- Number Grid - 25 rows -->
