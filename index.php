@@ -155,24 +155,27 @@ $progressPercentage = ($filledAnswers / $totalAnswers) * 100;
                             Mulai Tes
                         </button>
                     <?php else: ?>
-                        <div class="flex items-center gap-3">
-                            <div class="text-green-600 font-medium px-4 py-2">
+                        <div class="text-green-600 font-medium px-4 py-2 bg-green-50 rounded-lg border border-green-200">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
                                 Tes sedang berjalan
                             </div>
-                            <button
-                                type="submit"
-                                name="action"
-                                value="stop_test"
-                                class="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                                onclick="return confirm('Apakah Anda yakin ingin menghentikan tes?')"
-                            >
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v4H9z"></path>
-                                </svg>
-                                Hentikan Tes
-                            </button>
                         </div>
+                        <button
+                            type="submit"
+                            name="action"
+                            value="stop_test"
+                            class="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                            onclick="return confirm('Apakah Anda yakin ingin menghentikan tes? Data akan disimpan secara otomatis.')"
+                        >
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v4H9z"></path>
+                            </svg>
+                            Hentikan Tes
+                        </button>
                     <?php endif; ?>
                     
                     <button
