@@ -56,7 +56,7 @@ if (!$testData) {
                 <div class="bg-blue-50 p-4 rounded-lg">
                     <h3 class="font-semibold text-blue-900 mb-2">Peserta</h3>
                     <p class="text-blue-800"><?php echo htmlspecialchars($session['participant_name']); ?></p>
-                    <p class="text-sm text-blue-600 font-mono"><?php echo htmlspecialchars($session['participant_nip']); ?></p>
+                    <p class="text-sm text-blue-600"><?php echo htmlspecialchars($session['participant_unit_kerja']); ?></p>
                 </div>
                 
                 <div class="bg-green-50 p-4 rounded-lg">

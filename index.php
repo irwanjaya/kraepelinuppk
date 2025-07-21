@@ -7,7 +7,7 @@ require_once 'includes/functions.php';
 if (!isset($_SESSION['test_data'])) {
     $_SESSION['test_data'] = generateTestData();
     $_SESSION['test_running'] = false;
-    $_SESSION['participant_info'] = ['name' => '', 'nip' => ''];
+    $_SESSION['participant_info'] = ['name' => '', 'unit_kerja' => ''];
 }
 
 // Handle form submissions
@@ -18,7 +18,7 @@ if ($_POST) {
                 $_SESSION['test_running'] = true;
                 $_SESSION['participant_info'] = [
                     'name' => $_POST['participant_name'],
-                    'nip' => $_POST['participant_nip']
+                    'unit_kerja' => $_POST['participant_unit_kerja']
                 ];
                 $_SESSION['test_start_time'] = time();
                 break;
@@ -33,7 +33,7 @@ if ($_POST) {
             case 'reset_test':
                 $_SESSION['test_data'] = generateTestData();
                 $_SESSION['test_running'] = false;
-                $_SESSION['participant_info'] = ['name' => '', 'nip' => ''];
+                $_SESSION['participant_info'] = ['name' => '', 'unit_kerja' => ''];
                 unset($_SESSION['test_start_time']);
                 unset($_SESSION['test_end_time']);
                 break;
@@ -111,23 +111,19 @@ $progressPercentage = ($filledAnswers / $totalAnswers) * 100;
                         />
                     </div>
                     <div>
-                        <label for="participant_nip" class="block text-sm font-medium text-gray-700 mb-2">
-                            NIP Peserta (18 digit)
+                        <label for="participant_unit_kerja" class="block text-sm font-medium text-gray-700 mb-2">
+                            Unit Kerja
                         </label>
                         <input
-                            id="participant_nip"
-                            name="participant_nip"
+                            id="participant_unit_kerja"
+                            name="participant_unit_kerja"
                             type="text"
-                            value="<?php echo htmlspecialchars($participantInfo['nip']); ?>"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors font-mono"
-                            placeholder="123456789012345678"
-                            maxlength="18"
-                            pattern="[0-9]{18}"
+                            value="<?php echo htmlspecialchars($participantInfo['unit_kerja']); ?>"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                            placeholder="Masukkan unit kerja"
+                            maxlength="100"
                             <?php echo $isRunning ? 'disabled' : ''; ?>
                         />
-                        <div class="text-xs text-gray-500 mt-1">
-                            <span id="nip-length"><?php echo strlen($participantInfo['nip']); ?></span>/18 digit
-                        </div>
                     </div>
                 </div>
 
@@ -204,9 +200,9 @@ $progressPercentage = ($filledAnswers / $totalAnswers) * 100;
             </form>
             
             <!-- Validation Message -->
-            <?php if (!$isRunning && (empty(trim($participantInfo['name'])) || strlen($participantInfo['nip']) !== 18)): ?>
+            <?php if (!$isRunning && (empty(trim($participantInfo['name'])) || empty(trim($participantInfo['unit_kerja'])))): ?>
                 <div class="mt-3 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-3">
-                    <strong>Perhatian:</strong> Lengkapi nama peserta dan NIP (18 digit) sebelum memulai tes.
+                    <strong>Perhatian:</strong> Lengkapi nama peserta dan unit kerja sebelum memulai tes.
                 </div>
             <?php endif; ?>
         </div>

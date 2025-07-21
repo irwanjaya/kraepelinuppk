@@ -43,7 +43,7 @@ function initializeDatabase() {
         CREATE TABLE IF NOT EXISTS test_sessions (
             id INT AUTO_INCREMENT PRIMARY KEY,
             participant_name VARCHAR(255) NOT NULL,
-            participant_nip VARCHAR(18) NOT NULL,
+            participant_unit_kerja VARCHAR(100) NOT NULL,
             start_time TIMESTAMP NOT NULL,
             end_time TIMESTAMP NULL,
             duration_seconds INT NULL,

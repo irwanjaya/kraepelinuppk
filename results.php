@@ -64,7 +64,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'delete' && isset($_POST['se
                                     Peserta
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    NIP
+                                    Unit Kerja
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Tanggal Tes
@@ -92,8 +92,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'delete' && isset($_POST['se
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900 font-mono">
-                                            <?php echo htmlspecialchars($result['participant_nip']); ?>
+                                        <div class="text-sm text-gray-900">
+                                            <?php echo htmlspecialchars($result['participant_unit_kerja']); ?>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">

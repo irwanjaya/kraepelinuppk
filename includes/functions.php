@@ -51,13 +51,13 @@ function saveTestResults($participantInfo, $testData, $startTime, $endTime) {
         // Insert test session
         $stmt = $pdo->prepare("
             INSERT INTO test_sessions 
-            (participant_name, participant_nip, start_time, end_time, duration_seconds, total_answers, filled_answers, completion_percentage) 
+            (participant_name, participant_unit_kerja, start_time, end_time, duration_seconds, total_answers, filled_answers, completion_percentage) 
             VALUES (?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?), ?, ?, ?, ?)
         ");
         
         $stmt->execute([
             $participantInfo['name'],
-            $participantInfo['nip'],
+            $participantInfo['unit_kerja'],
             $startTime,
             $endTime,
             $duration,
@@ -149,14 +149,14 @@ function exportToExcel($sessionId = null) {
             }
             $session = [
                 'participant_name' => $_SESSION['participant_info']['name'],
-                'participant_nip' => $_SESSION['participant_info']['nip']
+               'participant_unit_kerja' => $_SESSION['participant_info']['unit_kerja']
             ];
         }
         
         // Create CSV content
         $csvContent = "Tes Kraepelin - Hasil\n";
         $csvContent .= "Nama: " . $session['participant_name'] . "\n";
-        $csvContent .= "NIP: " . $session['participant_nip'] . "\n";
+       $csvContent .= "Unit Kerja: " . $session['participant_unit_kerja'] . "\n";
         $csvContent .= "Tanggal: " . date('Y-m-d H:i:s') . "\n\n";
         
         // Get test data

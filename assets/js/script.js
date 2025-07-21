@@ -18,40 +18,38 @@ function initializeApp() {
     // Setup auto-save
     setupAutoSave();
     
-    // Setup NIP input formatting
-    setupNIPFormatting();
 }
 
 function setupFormValidation() {
     const form = document.getElementById('participantForm');
     const startBtn = document.getElementById('startBtn');
     const nameInput = document.getElementById('participant_name');
-    const nipInput = document.getElementById('participant_nip');
+    const unitKerjaInput = document.getElementById('participant_unit_kerja');
     
     function validateForm() {
         const nameValid = nameInput.value.trim().length > 0;
-        const nipValid = nipInput.value.length === 18 && /^\d{18}$/.test(nipInput.value);
+        const unitKerjaValid = unitKerjaInput.value.trim().length > 0;
         
         if (startBtn) {
-            startBtn.disabled = !(nameValid && nipValid);
+            startBtn.disabled = !(nameValid && unitKerjaValid);
         }
         
-        return nameValid && nipValid;
+        return nameValid && unitKerjaValid;
     }
     
     if (nameInput) {
         nameInput.addEventListener('input', validateForm);
     }
     
-    if (nipInput) {
-        nipInput.addEventListener('input', validateForm);
+    if (unitKerjaInput) {
+        unitKerjaInput.addEventListener('input', validateForm);
     }
     
     if (form) {
         form.addEventListener('submit', function(e) {
             if (!validateForm() && e.submitter && e.submitter.value === 'start_test') {
                 e.preventDefault();
-                alert('Mohon lengkapi nama peserta dan NIP (18 digit) sebelum memulai tes.');
+                alert('Mohon lengkapi nama peserta dan unit kerja sebelum memulai tes.');
             }
         });
     }
@@ -221,35 +219,6 @@ function setupAutoSave() {
     }, 30000);
 }
 
-function setupNIPFormatting() {
-    const nipInput = document.getElementById('participant_nip');
-    const nipLength = document.getElementById('nip-length');
-    
-    if (nipInput && nipLength) {
-        nipInput.addEventListener('input', function(e) {
-            // Only allow numeric input
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 18) {
-                value = value.slice(0, 18);
-            }
-            e.target.value = value;
-            
-            // Update length display
-            nipLength.textContent = value.length;
-            
-            // Visual feedback
-            if (value.length === 18) {
-                e.target.classList.remove('border-red-300');
-                e.target.classList.add('border-green-300');
-            } else if (value.length > 0) {
-                e.target.classList.remove('border-green-300');
-                e.target.classList.add('border-red-300');
-            } else {
-                e.target.classList.remove('border-red-300', 'border-green-300');
-            }
-        });
-    }
-}
 
 function updateProgress() {
     // This function can be enhanced to update progress in real-time
