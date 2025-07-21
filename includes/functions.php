@@ -159,77 +159,42 @@ function exportToExcel($sessionId = null) {
         $csvContent .= "NIP: " . $session['participant_nip'] . "\n";
         $csvContent .= "Tanggal: " . date('Y-m-d H:i:s') . "\n\n";
         
-        // Calculate detailed statistics for export
-        $columnStats = [];
+        // Get test data
+        $testData = $sessionId ? getSessionTestData($sessionId) : $_SESSION['test_data'];
+        
+        // Calculate statistics per column and total wrong answers
         $totalWrongAnswers = 0;
         
         for ($col = 0; $col < 50; $col++) {
             $answeredInColumn = 0;
-            $wrongInColumn = 0;
             
             for ($row = 0; $row < 24; $row++) { // Only check rows 0-23 (24 rows) since row 24 has no next row to compare
                 $answer = trim($testData['answers'][$row][$col]);
                 if ($answer !== '') {
                     $answeredInColumn++;
-                    
+                }
+            }
+            
+            // Add to CSV content
+            $csvContent .= "Banyaknya baris yang dijawab pada kolom " . ($col + 1) . ": " . $answeredInColumn . "\n";
+        }
+        
+        // Calculate total wrong answers across all columns
+        for ($row = 0; $row < 24; $row++) { // Only check rows 0-23 since row 24 has no next row to compare
+            for ($col = 0; $col < 50; $col++) {
+                $answer = trim($testData['answers'][$row][$col]);
+                if ($answer !== '') {
                     // Check if answer is correct
                     $expectedAnswer = $testData['numbers'][$row][$col] + $testData['numbers'][$row + 1][$col];
                     if (intval($answer) !== $expectedAnswer) {
-                        $wrongInColumn++;
                         $totalWrongAnswers++;
                     }
                 }
             }
-            
-            $columnStats[$col] = [
-                'answered' => $answeredInColumn,
-                'wrong' => $wrongInColumn
-            ];
         }
         
-        // Add statistics to CSV
-        $csvContent .= "STATISTIK PESERTA\n";
-        $csvContent .= "Jumlah kolom jawaban yang salah dari soal yang dijawab: " . $totalWrongAnswers . "\n\n";
-        
-        // Add column statistics
-        $csvContent .= "STATISTIK PER KOLOM\n";
-        $csvContent .= "Kolom,Jumlah Baris Dijawab,Jumlah Jawaban Salah\n";
-        for ($col = 0; $col < 50; $col++) {
-            $csvContent .= "Kolom " . ($col + 1) . "," . $columnStats[$col]['answered'] . "," . $columnStats[$col]['wrong'] . "\n";
-        }
-        $csvContent .= "\n";
-        
-        // Add questions header
-        $csvContent .= "SOAL\n";
-        $header = "";
-        for ($col = 0; $col < 50; $col++) {
-            $header .= "Kolom " . ($col + 1) . ",";
-        }
-        $csvContent .= rtrim($header, ',') . "\n";
-        
-        // Add questions data
-        $testData = $sessionId ? getSessionTestData($sessionId) : $_SESSION['test_data'];
-        for ($row = 0; $row < 25; $row++) {
-            $rowData = "";
-            for ($col = 0; $col < 50; $col++) {
-                $rowData .= $testData['numbers'][$row][$col] . ",";
-            }
-            $csvContent .= rtrim($rowData, ',') . "\n";
-        }
-        
-        // Add answers header
-        $csvContent .= "\nJAWABAN\n";
-        $csvContent .= "Baris," . rtrim($header, ',') . "\n";
-        
-        // Add answers data
-        for ($row = 0; $row < 25; $row++) {
-            $rowData = ($row + 1) . ",";
-            for ($col = 0; $col < 50; $col++) {
-                $answer = isset($testData['answers'][$row][$col]) ? $testData['answers'][$row][$col] : '';
-                $rowData .= $answer . ",";
-            }
-            $csvContent .= rtrim($rowData, ',') . "\n";
-        }
+        // Add total wrong answers
+        $csvContent .= "Banyaknya jawaban yang salah dari baris yang dijawab di semua kolom: " . $totalWrongAnswers . "\n";
         
         return $csvContent;
     } catch (Exception $e) {
