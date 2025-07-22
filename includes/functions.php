@@ -162,26 +162,25 @@ function exportToExcel($sessionId = null) {
         // Get test data
         $testData = $sessionId ? getSessionTestData($sessionId) : $_SESSION['test_data'];
         
-        // Calculate statistics per column and total wrong answers
-        $totalWrongAnswers = 0;
-        
+        // Calculate filled rows per column
         for ($col = 0; $col < 50; $col++) {
-            $answeredInColumn = 0;
+            $filledRows = 0;
             
-            for ($row = 0; $row < 24; $row++) { // Only check rows 0-23 (24 rows) since row 24 has no next row to compare
+            for ($row = 0; $row < 25; $row++) {
                 $answer = trim($testData['answers'][$row][$col]);
                 if ($answer !== '') {
-                    $answeredInColumn++;
+                    $filledRows++;
                 }
             }
             
-            // Add to CSV content
-            $csvContent .= "Banyaknya baris yang dijawab pada kolom " . ($col + 1) . ": " . $answeredInColumn . "\n";
+            $csvContent .= "Banyaknya baris yang diisi pada kolom " . ($col + 1) . ": " . $filledRows . "\n";
         }
         
-        // Calculate total wrong answers across all columns
-        for ($row = 0; $row < 24; $row++) { // Only check rows 0-23 since row 24 has no next row to compare
-            for ($col = 0; $col < 50; $col++) {
+        // Calculate total wrong answers
+        $totalWrongAnswers = 0;
+        
+        for ($col = 0; $col < 50; $col++) {
+            for ($row = 0; $row < 24; $row++) { // Only check rows 0-23 since row 24 has no next row to compare
                 $answer = trim($testData['answers'][$row][$col]);
                 if ($answer !== '') {
                     // Check if answer is correct
@@ -193,8 +192,8 @@ function exportToExcel($sessionId = null) {
             }
         }
         
-        // Add total wrong answers
-        $csvContent .= "Banyaknya jawaban yang salah dari baris yang dijawab di semua kolom: " . $totalWrongAnswers . "\n";
+        // Add total wrong answers with the requested format
+        $csvContent .= "Banyaknya kolom yang salah dari jawaban yang diisi: " . $totalWrongAnswers . "\n";
         
         return $csvContent;
     } catch (Exception $e) {
