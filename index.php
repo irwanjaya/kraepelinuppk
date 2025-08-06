@@ -3,11 +3,16 @@ session_start();
 require_once 'config/database.php';
 require_once 'includes/functions.php';
 
+// Check if participant is logged in
+if (!isset($_SESSION['participant_logged_in'])) {
+    header('Location: login.php');
+    exit;
+}
+
 // Initialize test data if not exists
 if (!isset($_SESSION['test_data'])) {
     $_SESSION['test_data'] = generateTestData();
     $_SESSION['test_running'] = false;
-    $_SESSION['participant_info'] = ['name' => '', 'unit_kerja' => ''];
 }
 
 // Handle form submissions
@@ -16,10 +21,6 @@ if ($_POST) {
         switch ($_POST['action']) {
             case 'start_test':
                 $_SESSION['test_running'] = true;
-                $_SESSION['participant_info'] = [
-                    'name' => $_POST['participant_name'],
-                    'unit_kerja' => $_POST['participant_unit_kerja']
-                ];
                 $_SESSION['test_start_time'] = time();
                 break;
                 
@@ -33,10 +34,14 @@ if ($_POST) {
             case 'reset_test':
                 $_SESSION['test_data'] = generateTestData();
                 $_SESSION['test_running'] = false;
-                $_SESSION['participant_info'] = ['name' => '', 'unit_kerja' => ''];
                 unset($_SESSION['test_start_time']);
                 unset($_SESSION['test_end_time']);
                 break;
+                
+            case 'logout':
+                session_destroy();
+                header('Location: login.php');
+                exit;
                 
             case 'update_answer':
                 $row = intval($_POST['row']);
@@ -82,6 +87,9 @@ $progressPercentage = ($filledAnswers / $totalAnswers) * 100;
             <div class="flex items-center justify-between mb-4">
                 <h1 class="text-3xl font-bold text-gray-900">Tes Kraepelin</h1>
                 <div class="flex items-center gap-4">
+                    <div class="text-sm text-gray-600">
+                        Selamat datang, <span class="font-medium"><?php echo htmlspecialchars($participantInfo['name']); ?></span>
+                    </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -93,37 +101,32 @@ $progressPercentage = ($filledAnswers / $totalAnswers) * 100;
                 </div>
             </div>
 
-            <!-- Participant Information -->
+            <!-- Participant Information (Read-only) -->
             <form method="POST" id="participantForm">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div>
-                        <label for="participant_name" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
                             Nama Peserta
                         </label>
-                        <input
-                            id="participant_name"
-                            name="participant_name"
-                            type="text"
-                            value="<?php echo htmlspecialchars($participantInfo['name']); ?>"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                            placeholder="Masukkan nama lengkap"
-                            <?php echo $isRunning ? 'disabled' : ''; ?>
-                        />
+                        <div class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-700">
+                            <?php echo htmlspecialchars($participantInfo['name']); ?>
+                        </div>
                     </div>
                     <div>
-                        <label for="participant_unit_kerja" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
                             Unit Kerja
                         </label>
-                        <input
-                            id="participant_unit_kerja"
-                            name="participant_unit_kerja"
-                            type="text"
-                            value="<?php echo htmlspecialchars($participantInfo['unit_kerja']); ?>"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                            placeholder="Masukkan unit kerja"
-                            maxlength="100"
-                            <?php echo $isRunning ? 'disabled' : ''; ?>
-                        />
+                        <div class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-700">
+                            <?php echo htmlspecialchars($participantInfo['unit_kerja']); ?>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Username
+                        </label>
+                        <div class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg text-gray-700">
+                            <?php echo htmlspecialchars($participantInfo['username']); ?>
+                        </div>
                     </div>
                 </div>
 
@@ -143,7 +146,7 @@ $progressPercentage = ($filledAnswers / $totalAnswers) * 100;
                             name="action"
                             value="start_test"
                             id="startBtn"
-                            class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                            class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-10V4a2 2 0 00-2-2H5a2 2 0 00-2 2v16l3-2 3 2 3-2 3 2V4z"></path>
@@ -196,15 +199,21 @@ $progressPercentage = ($filledAnswers / $totalAnswers) * 100;
                         </svg>
                         Export Excel
                     </a>
+                    
+                    <button
+                        type="submit"
+                        name="action"
+                        value="logout"
+                        class="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                        onclick="return confirm('Apakah Anda yakin ingin logout?')"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        Logout
+                    </button>
                 </div>
             </form>
-            
-            <!-- Validation Message -->
-            <?php if (!$isRunning && (empty(trim($participantInfo['name'])) || empty(trim($participantInfo['unit_kerja'])))): ?>
-                <div class="mt-3 text-sm text-amber-600 bg-amber-50 border border-amber-200 rounded-lg p-3">
-                    <strong>Perhatian:</strong> Lengkapi nama peserta dan unit kerja sebelum memulai tes.
-                </div>
-            <?php endif; ?>
         </div>
 
         <!-- Instructions -->

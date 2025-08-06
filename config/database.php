@@ -44,6 +44,8 @@ function initializeDatabase() {
             id INT AUTO_INCREMENT PRIMARY KEY,
             participant_name VARCHAR(255) NOT NULL,
             participant_unit_kerja VARCHAR(100) NOT NULL,
+            participant_username VARCHAR(50) NOT NULL,
+            participant_password VARCHAR(255) NOT NULL,
             start_time TIMESTAMP NOT NULL,
             end_time TIMESTAMP NULL,
             duration_seconds INT NULL,
@@ -51,7 +53,8 @@ function initializeDatabase() {
             filled_answers INT DEFAULT 0,
             completion_percentage DECIMAL(5,2) DEFAULT 0.00,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_username (participant_username)
         );
 
         CREATE TABLE IF NOT EXISTS test_questions (

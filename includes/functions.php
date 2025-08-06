@@ -27,11 +27,74 @@ function generateTestData() {
 }
 
 /**
+ * Register new participant
+ */
+function registerParticipant($name, $unitKerja, $username, $password) {
+    try {
+        $pdo = getConnection();
+        
+        // Check if username already exists
+        $stmt = $pdo->prepare("SELECT id FROM test_sessions WHERE participant_username = ?");
+        $stmt->execute([$username]);
+        if ($stmt->fetch()) {
+            return ['success' => false, 'message' => 'Username sudah digunakan. Silakan pilih username lain.'];
+        }
+        
+        // Hash password
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        
+        // Create initial session record
+        $stmt = $pdo->prepare("
+            INSERT INTO test_sessions 
+            (participant_name, participant_unit_kerja, participant_username, participant_password, start_time, total_answers) 
+            VALUES (?, ?, ?, ?, NOW(), 1250)
+        ");
+        
+        $stmt->execute([$name, $unitKerja, $username, $hashedPassword]);
+        $sessionId = $pdo->lastInsertId();
+        
+        return ['success' => true, 'session_id' => $sessionId];
+    } catch (PDOException $e) {
+        error_log("Error registering participant: " . $e->getMessage());
+        return ['success' => false, 'message' => 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.'];
+    }
+}
+
+/**
+ * Login participant
+ */
+function loginParticipant($username, $password) {
+    try {
+        $pdo = getConnection();
+        
+        $stmt = $pdo->prepare("SELECT * FROM test_sessions WHERE participant_username = ?");
+        $stmt->execute([$username]);
+        $participant = $stmt->fetch();
+        
+        if (!$participant) {
+            return ['success' => false, 'message' => 'Username tidak ditemukan.'];
+        }
+        
+        if (!password_verify($password, $participant['participant_password'])) {
+            return ['success' => false, 'message' => 'Password salah.'];
+        }
+        
+        return ['success' => true, 'participant' => $participant];
+    } catch (PDOException $e) {
+        error_log("Error logging in participant: " . $e->getMessage());
+        return ['success' => false, 'message' => 'Terjadi kesalahan saat login. Silakan coba lagi.'];
+    }
+}
+
+/**
  * Save test results to database
  */
 function saveTestResults($participantInfo, $testData, $startTime, $endTime) {
     try {
         $pdo = getConnection();
+        
+        // Get session ID from participant info
+        $sessionId = $participantInfo['session_id'];
         
         // Calculate statistics
         $duration = $endTime - $startTime;
@@ -48,25 +111,14 @@ function saveTestResults($participantInfo, $testData, $startTime, $endTime) {
         
         $completionPercentage = ($filledAnswers / $totalAnswers) * 100;
         
-        // Insert test session
+        // Update existing test session
         $stmt = $pdo->prepare("
-            INSERT INTO test_sessions 
-            (participant_name, participant_unit_kerja, start_time, end_time, duration_seconds, total_answers, filled_answers, completion_percentage) 
-            VALUES (?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?), ?, ?, ?, ?)
+            UPDATE test_sessions 
+            SET end_time = FROM_UNIXTIME(?), duration_seconds = ?, filled_answers = ?, completion_percentage = ?
+            WHERE id = ?
         ");
         
-        $stmt->execute([
-            $participantInfo['name'],
-            $participantInfo['unit_kerja'],
-            $startTime,
-            $endTime,
-            $duration,
-            $totalAnswers,
-            $filledAnswers,
-            $completionPercentage
-        ]);
-        
-        $sessionId = $pdo->lastInsertId();
+        $stmt->execute([$endTime, $duration, $filledAnswers, $completionPercentage, $sessionId]);
         
         // Insert questions and answers
         $questionStmt = $pdo->prepare("

@@ -64,6 +64,9 @@ if (isset($_POST['action']) && $_POST['action'] === 'delete' && isset($_POST['se
                                     Peserta
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Username
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Unit Kerja
                                 </th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -89,6 +92,11 @@ if (isset($_POST['action']) && $_POST['action'] === 'delete' && isset($_POST['se
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">
                                             <?php echo htmlspecialchars($result['participant_name']); ?>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">
+                                            <?php echo htmlspecialchars($result['participant_username']); ?>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">

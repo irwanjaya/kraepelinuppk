@@ -52,11 +52,16 @@ if (!$testData) {
             </div>
             
             <!-- Session Info -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
                 <div class="bg-blue-50 p-4 rounded-lg">
                     <h3 class="font-semibold text-blue-900 mb-2">Peserta</h3>
                     <p class="text-blue-800"><?php echo htmlspecialchars($session['participant_name']); ?></p>
-                    <p class="text-sm text-blue-600"><?php echo htmlspecialchars($session['participant_unit_kerja']); ?></p>
+                    <p class="text-sm text-blue-600">@<?php echo htmlspecialchars($session['participant_username']); ?></p>
+                </div>
+                
+                <div class="bg-indigo-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-indigo-900 mb-2">Unit Kerja</h3>
+                    <p class="text-indigo-800"><?php echo htmlspecialchars($session['participant_unit_kerja']); ?></p>
                 </div>
                 
                 <div class="bg-green-50 p-4 rounded-lg">

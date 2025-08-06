@@ -21,41 +21,8 @@ function initializeApp() {
 }
 
 function setupFormValidation() {
-    const form = document.getElementById('participantForm');
-    const startBtn = document.getElementById('startBtn');
-    const nameInput = document.getElementById('participant_name');
-    const unitKerjaInput = document.getElementById('participant_unit_kerja');
-    
-    function validateForm() {
-        const nameValid = nameInput.value.trim().length > 0;
-        const unitKerjaValid = unitKerjaInput.value.trim().length > 0;
-        
-        if (startBtn) {
-            startBtn.disabled = !(nameValid && unitKerjaValid);
-        }
-        
-        return nameValid && unitKerjaValid;
-    }
-    
-    if (nameInput) {
-        nameInput.addEventListener('input', validateForm);
-    }
-    
-    if (unitKerjaInput) {
-        unitKerjaInput.addEventListener('input', validateForm);
-    }
-    
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            if (!validateForm() && e.submitter && e.submitter.value === 'start_test') {
-                e.preventDefault();
-                alert('Mohon lengkapi nama peserta dan unit kerja sebelum memulai tes.');
-            }
-        });
-    }
-    
-    // Initial validation
-    validateForm();
+    // Form validation is no longer needed since participant info is pre-filled from login
+    console.log('Participant is logged in, form validation skipped');
 }
 
 function setupAnswerInputs() {
